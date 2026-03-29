@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { AppShell } from "./AppShell";
 import { PinLock } from "./PinLock";
 import { ensureSeedData } from "../data/seed";
@@ -13,8 +13,8 @@ export function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       {isUnlocked ? <AppShell /> : <PinLock />}
-    </BrowserRouter>
+    </HashRouter>
   );
 }
