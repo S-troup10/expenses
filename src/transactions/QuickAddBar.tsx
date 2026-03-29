@@ -18,16 +18,10 @@ export function QuickAddBar() {
   const [message, setMessage] = useState("Examples: 18 coffee, 42 groceries, 5200 salary");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const ready = useMemo(
-    () => Boolean(accounts?.length && categories?.length),
-    [accounts, categories]
-  );
   const parsed = useMemo(
     () =>
-      ready && accounts && categories
-        ? parseQuickAdd(input, accounts, categories, "AUD")
-        : null,
-    [accounts, categories, input, ready]
+      parseQuickAdd(input, accounts ?? [], categories ?? [], "AUD"),
+    [accounts, categories, input]
   );
   const suggestions = useMemo(
     () =>
@@ -44,11 +38,7 @@ export function QuickAddBar() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    if (!ready || !accounts || !categories) {
-      return;
-    }
-
-    if (!parsed || !parsed.accountId) {
+    if (!parsed) {
       setMessage("Could not understand that. Try something like 12 coffee or 5200 salary.");
       return;
     }

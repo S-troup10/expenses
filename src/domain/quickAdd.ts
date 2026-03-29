@@ -97,7 +97,7 @@ export function parseQuickAdd(
     trimmed.toLowerCase().includes(code)
   );
   const currency = currencyToken ? currencyMap[currencyToken] : baseCurrency;
-  const account = matchAccount(trimmed, accounts);
+  const account = accounts.length ? matchAccount(trimmed, accounts) : undefined;
   const category = matchCategory(trimmed, categories);
   const yesterday = trimmed.toLowerCase().includes("yesterday");
   const transferTargetMatch = trimmed.match(/\bto\s+([a-z0-9 ]+)$/i);
