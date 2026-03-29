@@ -3,10 +3,16 @@ import { SectionHeader } from "../components/SectionHeader";
 import { clearAllLocalFinanceData } from "../data/seed";
 import { useAppStore } from "../store/appStore";
 
+const PIN_DISABLED_KEY = "ledgerflow.pin.disabled";
+
 export function SettingsPage() {
   const lock = useAppStore((state) => state.lock);
   const [pin, setPin] = useState("");
-  const [message, setMessage] = useState("Default PIN is 1234.");
+  const [message, setMessage] = useState(
+    localStorage.getItem(PIN_DISABLED_KEY) === "true"
+      ? "PIN is currently disabled."
+      : "Default PIN is 1234."
+  );
   const [isClearing, setIsClearing] = useState(false);
 
   function handleSubmit(event: FormEvent) {
@@ -18,8 +24,24 @@ export function SettingsPage() {
     }
 
     localStorage.setItem("ledgerflow.pin", pin);
+    localStorage.setItem(PIN_DISABLED_KEY, "false");
     setPin("");
     setMessage("PIN updated locally for this browser.");
+  }
+
+  function handleRemovePin() {
+    const confirmed = window.confirm(
+      "Remove the PIN entirely? The app will open without locking on this device."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    localStorage.removeItem("ledgerflow.pin");
+    localStorage.setItem(PIN_DISABLED_KEY, "true");
+    setPin("");
+    setMessage("PIN removed. The app will now open without locking.");
   }
 
   async function handleClearData() {
@@ -66,6 +88,9 @@ export function SettingsPage() {
           <div className="action-row">
             <button className="primary-button" type="submit">
               Save PIN
+            </button>
+            <button className="secondary-button" onClick={handleRemovePin} type="button">
+              Remove PIN
             </button>
             <button className="secondary-button" onClick={lock} type="button">
               Lock app

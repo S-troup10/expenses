@@ -3,12 +3,24 @@ import { ShieldCheck } from "lucide-react";
 import { useAppStore } from "../store/appStore";
 
 const DEFAULT_PIN = "1234";
+const PIN_DISABLED_KEY = "ledgerflow.pin.disabled";
 
 export function PinLock() {
   const unlock = useAppStore((state) => state.unlock);
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
-  const pin = useMemo(() => localStorage.getItem("ledgerflow.pin") ?? DEFAULT_PIN, []);
+  const pin = useMemo(() => {
+    if (localStorage.getItem(PIN_DISABLED_KEY) === "true") {
+      return null;
+    }
+
+    return localStorage.getItem("ledgerflow.pin") ?? DEFAULT_PIN;
+  }, []);
+
+  if (!pin) {
+    unlock();
+    return null;
+  }
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -20,7 +32,7 @@ export function PinLock() {
       return;
     }
 
-    setError("That PIN does not match. Default PIN is 1234 until you change it.");
+    setError("That PIN does not match.");
   };
 
   return (
